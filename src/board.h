@@ -8,9 +8,9 @@
 #define BOARD
 
 // matrix grid (MxN)
-#define M 8 // # of rows
-#define N 8 // # of columns
-#define T 1 // # of time steps in simulation
+#define M 8  // # of rows
+#define N 8  // # of columns
+#define T 10 // # of time steps in simulation
 
 // 2 possible states for a cell
 #define ALIVE 1
@@ -33,10 +33,23 @@ extern void init_board(int board[][N]);
  * @param board matrix board to print out
  * @param M_local number of rows of the matrix board to print out
  */
-extern void print_board(int board[][N], int M_local, int rank);
+extern void print_board(int board[][N], int M_local);
 
+/**
+ * @brief return the top (or previous) neighbor block of rows/process
+ *
+ * @param rank rank of the process to find the top neighbor of
+ * @return int rank of the top neighbor
+ */
 extern int get_top_neighbor(int rank);
 
+/**
+ * @brief return the bottom (or next) neighbor block of rows/process
+ *
+ * @param rank rank of the process to find the bottom neighbor of
+ * @param size total number of processes executing the program
+ * @return int rank of the bottom neighbor
+ */
 extern int get_bottom_neighbor(int rank, int size);
 
 /**
@@ -46,6 +59,8 @@ extern int get_bottom_neighbor(int rank, int size);
  * @param row row of the cell to check neighbors of
  * @param col column of the cell to check neighbors of
  * @param M_local number of rows of the matrix board
+ * @param rank rank of the process to have the number of live neighbors of one of its cells counted
+ * @param size total number of processes executing the program
  * @return int number of live neighbors the cell has
  */
 extern int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int size);
@@ -55,6 +70,8 @@ extern int count_neighbors(int board[][N], int row, int col, int M_local, int ra
  *
  * @param board matrix board to check and update
  * @param M_local number of rows of the matrix board
+ * @param rank rank of the process to update its cells
+ * @param size total number of processes executing the program
  */
 extern void update_board(int board[][N], int M_local, int rank, int size);
 

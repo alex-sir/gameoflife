@@ -20,9 +20,8 @@ void init_board(int board[][N])
     }
 }
 
-void print_board(int board[][N], int M_local, int rank)
+void print_board(int board[][N], int M_local)
 {
-    printf("*** Process %d ***\n", rank);
     for (int row = 0; row < M_local; row++)
     {
         for (int col = 0; col < N; col++)
@@ -31,7 +30,6 @@ void print_board(int board[][N], int M_local, int rank)
         }
         printf("\n");
     }
-    printf("\n");
 }
 
 int get_top_neighbor(int rank)
@@ -68,23 +66,22 @@ int get_bottom_neighbor(int rank, int size)
 
 int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int size)
 {
-    // printf("RANK: %d SIZE: %d ", rank, size);
-    // printf("CELL %dx%d ", row, col);
     int neighbors = 0;
     // edges of the board
     int top = 1;
+    // very top row of the board DOES NOT have a top neighbor
     if (rank == 0 && row == 1)
     {
         top = 0;
     }
     int bottom = 1;
+    // very bottom row of the board DOES NOT have a bottom neighbor
     if (rank == (size - 1) && row == (M_local))
     {
         bottom = 0;
     }
-    int right = (col + 1) < N;
-    int left = (col - 1) >= 0;
-    // printf("t:%d b:%d r:%d l:%d\n", top, bottom, right, left);
+    int right = (col + 1) < N; // check if rightmost column
+    int left = (col - 1) >= 0; // check if leftmost column
 
     // check that the cell position exists and then check if the cell is alive or dead
     if (top && left && board[row - 1][col - 1])

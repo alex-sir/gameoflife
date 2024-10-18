@@ -39,7 +39,9 @@ int main(int argc, char **argv)
     if (rank == ROOT)
     {
         init_board(board);
-        print_board(board, M, ROOT);
+        printf("*** INITIAL BOARD ***\n");
+        print_board(board, M);
+        printf("\n");
     }
 
     int rows_per_process = M / size;
@@ -51,10 +53,6 @@ int main(int argc, char **argv)
 
     // send each process their rows
     MPI_Scatter(board, local_board_size, MPI_INT, local_board[1], local_board_size, MPI_INT, ROOT, MPI_COMM_WORLD);
-
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // print_board(local_board, total_rpp, rank);
-    // MPI_Barrier(MPI_COMM_WORLD);
 
     // every process updates their rows T number of times
     for (int step = 0; step < T; step++)
@@ -68,17 +66,14 @@ int main(int argc, char **argv)
         update_board(local_board, rows_per_process, rank, size);
     }
 
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // print_board(local_board, total_rpp, rank);
-    // MPI_Barrier(MPI_COMM_WORLD);
-
     // gather the final results of all the rows into root
     MPI_Gather(local_board[1], local_board_size, MPI_INT, board, local_board_size, MPI_INT, ROOT, MPI_COMM_WORLD);
 
     // print the final board
     if (rank == ROOT)
     {
-        print_board(board, M, ROOT);
+        printf("*** FINAL BOARD ***\n");
+        print_board(board, M);
     }
 
     MPI_Finalize();
