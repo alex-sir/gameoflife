@@ -68,8 +68,8 @@ int get_bottom_neighbor(int rank, int size)
 
 int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int size)
 {
-    printf("RANK: %d SIZE: %d ", rank, size);
-    printf("CELL %dx%d ", row, col);
+    // printf("RANK: %d SIZE: %d ", rank, size);
+    // printf("CELL %dx%d ", row, col);
     int neighbors = 0;
     // edges of the board
     int top = 1;
@@ -78,13 +78,13 @@ int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int
         top = 0;
     }
     int bottom = 1;
-    if (row == 8)
+    if (rank == (size - 1) && row == (M_local))
     {
         bottom = 0;
     }
     int right = (col + 1) < N;
     int left = (col - 1) >= 0;
-    printf("t:%d b:%d r:%d l:%d\n", top, bottom, right, left);
+    // printf("t:%d b:%d r:%d l:%d\n", top, bottom, right, left);
 
     // check that the cell position exists and then check if the cell is alive or dead
     if (top && left && board[row - 1][col - 1])
@@ -142,12 +142,12 @@ void update_board(int board[][N], int M_local, int rank, int size)
                 // overpopulation: greater than 3 neighbors -> cell dies
                 if (neighbors < 2 || neighbors > 3)
                 {
-                    new_board[row][col] = 0;
+                    new_board[row - 1][col] = 0;
                 }
                 // 2 or 3 neighbors -> cell lives
                 else
                 {
-                    new_board[row][col] = 1;
+                    new_board[row - 1][col] = 1;
                 }
             }
             // cell is not alive (0)
@@ -156,12 +156,12 @@ void update_board(int board[][N], int M_local, int rank, int size)
                 // reproduction: dead cell with exactly 3 neighbors -> cell becomes alive
                 if (neighbors == 3)
                 {
-                    new_board[row][col] = 1;
+                    new_board[row - 1][col] = 1;
                 }
                 // cell remains dead
                 else
                 {
-                    new_board[row][col] = 0;
+                    new_board[row - 1][col] = 0;
                 }
             }
         }
@@ -172,7 +172,7 @@ void update_board(int board[][N], int M_local, int rank, int size)
     {
         for (int col = 0; col < N; col++)
         {
-            board[row][col] = new_board[row][col];
+            board[row][col] = new_board[row - 1][col];
         }
     }
 }
