@@ -16,16 +16,19 @@
 #define ALIVE 1
 #define DEAD 0
 
+#include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+extern void alloc_board(int ***board);
 
 /**
  * @brief initialize a matrix board with random values of 0 or 1
  *
  * @param board matrix board to initialize with random values of 0 or 1
  */
-extern void init_board(int board[][N]);
+extern void init_board(int ***board);
 
 /**
  * @brief print a matrix board
@@ -33,7 +36,7 @@ extern void init_board(int board[][N]);
  * @param board matrix board to print out
  * @param M_local number of rows of the matrix board to print out
  */
-extern void print_board(int board[][N], int M_local, int rank);
+extern void print_board(int ***board, int M_local, int rank);
 
 extern int get_top_neighbor(int rank);
 

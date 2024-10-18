@@ -5,29 +5,36 @@
  */
 
 #include "board.h"
-#include <mpi.h>
-#include <stdio.h>
 
-void init_board(int board[][N])
+void alloc_board(int ***board)
+{
+    *board = malloc(M * sizeof(int *));
+    for (int i = 0; i < M; i++)
+    {
+        (*board)[i] = malloc(N * sizeof(int));
+    }
+}
+
+void init_board(int ***board)
 {
     for (int row = 0; row < M; row++)
     {
         for (int col = 0; col < N; col++)
         {
             // random value of 0 or 1
-            board[row][col] = (rand() % (ALIVE - DEAD + 1)) + DEAD;
+            (*board)[row][col] = rand() % 2;
         }
     }
 }
 
-void print_board(int board[][N], int M_local, int rank)
+void print_board(int ***board, int M_local, int rank)
 {
     printf("*** Process %d ***\n", rank);
     for (int row = 0; row < M_local; row++)
     {
         for (int col = 0; col < N; col++)
         {
-            printf("%d ", board[row][col]);
+            printf("%d ", (*board)[row][col]);
         }
         printf("\n");
     }
