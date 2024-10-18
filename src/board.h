@@ -8,8 +8,8 @@
 #define BOARD
 
 // matrix grid (MxN)
-#define M 8 // # of rows
-#define N 8 // # of columns
+#define M 5 // # of rows
+#define N 5 // # of columns
 #define T 1 // # of time steps in simulation
 
 // 2 possible states for a cell
@@ -21,14 +21,14 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern void alloc_board(int ***board);
+extern void alloc_board(int ***board, int num_rows);
 
 /**
  * @brief initialize a matrix board with random values of 0 or 1
  *
  * @param board matrix board to initialize with random values of 0 or 1
  */
-extern void init_board(int ***board);
+extern void init_board(int **board);
 
 /**
  * @brief print a matrix board
@@ -36,7 +36,9 @@ extern void init_board(int ***board);
  * @param board matrix board to print out
  * @param M_local number of rows of the matrix board to print out
  */
-extern void print_board(int ***board, int M_local, int rank);
+extern void print_board(int **board, int M_local, int rank);
+
+extern void free_board(int **board, int num_rows);
 
 extern int get_top_neighbor(int rank);
 
@@ -51,7 +53,7 @@ extern int get_bottom_neighbor(int rank, int size);
  * @param M_local number of rows of the matrix board
  * @return int number of live neighbors the cell has
  */
-extern int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int size);
+extern int count_neighbors(int **board, int row, int col, int M_local, int rank, int size);
 
 /**
  * @brief fully update a matrix board by checking all cells
@@ -59,6 +61,6 @@ extern int count_neighbors(int board[][N], int row, int col, int M_local, int ra
  * @param board matrix board to check and update
  * @param M_local number of rows of the matrix board
  */
-extern void update_board(int board[][N], int M_local, int rank, int size);
+extern void update_board(int **board, int M_local, int rank, int size);
 
 #endif

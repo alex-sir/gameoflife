@@ -6,39 +6,48 @@
 
 #include "board.h"
 
-void alloc_board(int ***board)
+void alloc_board(int ***board, int num_rows)
 {
-    *board = malloc(M * sizeof(int *));
-    for (int i = 0; i < M; i++)
+    *board = malloc(num_rows * sizeof(int *));
+    for (int row = 0; row < num_rows; row++)
     {
-        (*board)[i] = malloc(N * sizeof(int));
+        (*board)[row] = malloc(N * sizeof(int));
     }
 }
 
-void init_board(int ***board)
+void init_board(int **board)
 {
     for (int row = 0; row < M; row++)
     {
         for (int col = 0; col < N; col++)
         {
             // random value of 0 or 1
-            (*board)[row][col] = rand() % 2;
+            board[row][col] = rand() % 2;
         }
     }
 }
 
-void print_board(int ***board, int M_local, int rank)
+void print_board(int **board, int M_local, int rank)
 {
     printf("*** Process %d ***\n", rank);
     for (int row = 0; row < M_local; row++)
     {
         for (int col = 0; col < N; col++)
         {
-            printf("%d ", (*board)[row][col]);
+            printf("%d ", board[row][col]);
         }
         printf("\n");
     }
     printf("\n");
+}
+
+void free_board(int **board, int num_rows)
+{
+    for (int row = 0; row < num_rows; row++)
+    {
+        free(board[row]);
+    }
+    free(board);
 }
 
 int get_top_neighbor(int rank)
@@ -73,7 +82,7 @@ int get_bottom_neighbor(int rank, int size)
     return neighbor_rank;
 }
 
-int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int size)
+int count_neighbors(int **board, int row, int col, int M_local, int rank, int size)
 {
     printf("RANK: %d SIZE: %d ", rank, size);
     printf("CELL %dx%d ", row, col);
@@ -85,7 +94,7 @@ int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int
         top = 0;
     }
     int bottom = 1;
-    if (row == 8)
+    if (rank == (size - 1) && row == (M_local))
     {
         bottom = 0;
     }
@@ -130,10 +139,11 @@ int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int
     return neighbors;
 }
 
-void update_board(int board[][N], int M_local, int rank, int size)
+void update_board(int **board, int M_local, int rank, int size)
 {
     int neighbors = 0; // # of neighbors a cell has
-    int new_board[M_local][N];
+    int **new_board;
+    alloc_board(&new_board, M_local);
     int final_row = M_local + 1;
 
     for (int row = 1; row < final_row; row++)
@@ -149,12 +159,12 @@ void update_board(int board[][N], int M_local, int rank, int size)
                 // overpopulation: greater than 3 neighbors -> cell dies
                 if (neighbors < 2 || neighbors > 3)
                 {
-                    new_board[row][col] = 0;
+                    new_board[row - 1][col] = 0;
                 }
                 // 2 or 3 neighbors -> cell lives
                 else
                 {
-                    new_board[row][col] = 1;
+                    new_board[row - 1][col] = 1;
                 }
             }
             // cell is not alive (0)
@@ -163,12 +173,12 @@ void update_board(int board[][N], int M_local, int rank, int size)
                 // reproduction: dead cell with exactly 3 neighbors -> cell becomes alive
                 if (neighbors == 3)
                 {
-                    new_board[row][col] = 1;
+                    new_board[row - 1][col] = 1;
                 }
                 // cell remains dead
                 else
                 {
-                    new_board[row][col] = 0;
+                    new_board[row - 1][col] = 0;
                 }
             }
         }
@@ -179,7 +189,8 @@ void update_board(int board[][N], int M_local, int rank, int size)
     {
         for (int col = 0; col < N; col++)
         {
-            board[row][col] = new_board[row][col];
+            board[row][col] = new_board[row - 1][col];
         }
     }
+    free_board(new_board, M_local);
 }
