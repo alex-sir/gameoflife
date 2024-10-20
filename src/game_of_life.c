@@ -4,11 +4,6 @@
  *  Homework 2: Conway's Game of Life
  */
 
-#include <mpi.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
 #include "board.h"
 
 // root process
@@ -30,9 +25,14 @@ int main(int argc, char **argv)
         {
             printf("Error: %d rows not divisble by %d processes\n", M, size);
         }
+
         MPI_Finalize();
         return 0;
     }
+
+    // track the time it takes for the program to fully run
+    double startwtime, endwtime;
+    startwtime = MPI_Wtime();
 
     int board[M][N];
     // setup the initial board
@@ -72,8 +72,10 @@ int main(int argc, char **argv)
     // print the final board
     if (rank == ROOT)
     {
+        endwtime = MPI_Wtime();
         printf("*** FINAL BOARD ***\n");
         print_board(board, M);
+        printf("Wall clock time: %fs\n", endwtime - startwtime);
     }
 
     MPI_Finalize();

@@ -5,8 +5,6 @@
  */
 
 #include "board.h"
-#include <mpi.h>
-#include <stdio.h>
 
 void init_board(int board[][N])
 {
@@ -15,7 +13,7 @@ void init_board(int board[][N])
         for (int col = 0; col < N; col++)
         {
             // random value of 0 or 1
-            board[row][col] = (rand() % (ALIVE - DEAD + 1)) + DEAD;
+            board[row][col] = rand() % 2;
         }
     }
 }
@@ -36,6 +34,7 @@ int get_top_neighbor(int rank)
 {
     int neighbor_rank = 0;
 
+    // a top neighbor doesn't exist
     if (rank == 0)
     {
         neighbor_rank = MPI_PROC_NULL;
@@ -52,6 +51,7 @@ int get_bottom_neighbor(int rank, int size)
 {
     int neighbor_rank = 0;
 
+    // a bottom neighbor doesn't exist
     if (rank == (size - 1))
     {
         neighbor_rank = MPI_PROC_NULL;
@@ -69,13 +69,13 @@ int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int
     int neighbors = 0;
     // edges of the board
     int top = 1;
-    // very top row of the board DOES NOT have a top neighbor
+    // very top row of the board DOESN'T have a top neighbor
     if (rank == 0 && row == 1)
     {
         top = 0;
     }
     int bottom = 1;
-    // very bottom row of the board DOES NOT have a bottom neighbor
+    // very bottom row of the board DOESN'T have a bottom neighbor
     if (rank == (size - 1) && row == (M_local))
     {
         bottom = 0;

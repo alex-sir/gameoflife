@@ -8,14 +8,15 @@
 #define BOARD
 
 // matrix grid (MxN)
-#define M 8  // # of rows
-#define N 8  // # of columns
-#define T 10 // # of time steps in simulation
+#define M 64  // # of rows
+#define N 16  // # of columns
+#define T 100 // # of time steps in simulation
 
 // 2 possible states for a cell
 #define ALIVE 1
 #define DEAD 0
 
+#include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -66,11 +67,11 @@ extern int get_bottom_neighbor(int rank, int size);
 extern int count_neighbors(int board[][N], int row, int col, int M_local, int rank, int size);
 
 /**
- * @brief fully update a matrix board by checking all cells
+ * @brief fully update a matrix board by checking all of its cells
  *
  * @param board matrix board to check and update
  * @param M_local number of rows of the matrix board
- * @param rank rank of the process to update its cells
+ * @param rank rank of the process having its cells updated
  * @param size total number of processes executing the program
  */
 extern void update_board(int board[][N], int M_local, int rank, int size);
