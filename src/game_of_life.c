@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     {
         if (rank == ROOT)
         {
-            printf("Error: %d rows not divisble by %d processes\n", M, size);
+            printf("Error: %d rows not divisible by %d processes\n", M, size);
         }
 
         MPI_Finalize();
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
         endwtime = MPI_Wtime();
         printf("*** FINAL BOARD ***\n");
         print_board(board, M);
-        printf("Wall clock time: %fs\n", endwtime - startwtime);
+        printf("\nWall clock time: %fs\n", endwtime - startwtime);
     }
 
     MPI_Finalize();
